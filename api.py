@@ -3,14 +3,21 @@ import requests
 import json
 from requests import HTTPError
 import socket
+from flask_caching import Cache
+
+config = {
+    # "DEBUG": True,          # some Flask specific configs
+    # "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_TYPE": "FileSystemCache",
+    "CACHE_DIR": "cache", # path to your server cache folder
+    "CACHE_THRESHOLD": 100000, # number of 'files' before start auto-delete
+    "CACHE_DEFAULT_TIMEOUT": 2592000
+}
 
 app = Flask(__name__)
+app.config.from_mapping(config)
 
-phone: str
-password: str
-token: str
-account: dict
-headers: dict
+cache = Cache(app)
 
 @app.route("/")
 def index():
@@ -18,11 +25,6 @@ def index():
 
 @app.route("/api/login/", methods=['POST'])
 def login():
-    global phone
-    global password
-    global token
-    global headers
-
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/auth/phone/login'
     payload = {}
     print(f"login: {request.json}")
@@ -30,10 +32,12 @@ def login():
         payload = request.json
         phone = request.json['mobile']
         password = request.json['password']
+        cache.set("phone", phone)
+        cache.set("pass", password)
     else:
         payload = {
-            'mobile':phone,
-            'password':password
+            'mobile':cache.get("phone"),
+            'password':cache.get("pass")
         }
 
     try:
@@ -42,12 +46,14 @@ def login():
         
         re = json.loads(r.text)
         token = re['data']['token']
+        cache.set("token", token)
 
         headers = {
             'Authorization': 'Bearer ' + token,
             'Token': token,
             'Content-Type': 'application/json'
         }
+        cache.set("headers", headers)
 
         return info()
 
@@ -56,8 +62,8 @@ def login():
 
 @app.route("/api/info/", methods=['POST'])
 def info(recall: bool = False):
-    global account
-    global headers
+    account = Cache.get("account")
+    headers = Cache.get("headers")
 
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
 
@@ -76,6 +82,7 @@ def info(recall: bool = False):
 
         account = re['data']
         account['ip_address'] = socket.gethostbyname(socket.gethostname())
+        Cache.set("account", account)
         print(f"Account: {account}")
         return account
 
@@ -84,7 +91,7 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
-    global headers
+    headers = Cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
     uid = account['uid']
     params = {
@@ -111,7 +118,7 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
-    global headers
+    headers = Cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
     uid = account['uid']
     params = {
@@ -140,7 +147,8 @@ def competition_info(recall: bool = False):
 
 @app.route("/api/competition/order", methods=['POST'])
 def competition_order(recall: bool = False):
-    global headers
+    headers = Cache.get("headers")
+    account = Cache.get("account")
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/order'
     uid = account['uid']
     payload = {
@@ -172,7 +180,8 @@ def competition_order(recall: bool = False):
 
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
-    global headers
+    headers = Cache.get("headers")
+    account = Cache.get("account")
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/record'
     uid = account['uid']
     payload = {
