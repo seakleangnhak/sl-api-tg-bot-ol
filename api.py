@@ -2,6 +2,7 @@ from flask import Flask, request
 import requests
 import json
 from requests import HTTPError
+import socket
 
 app = Flask(__name__)
 
@@ -70,6 +71,7 @@ def info(recall: bool = False):
         re = json.loads(r.text)
 
         account = re['data']
+        account['ip_address'] = socket.gethostbyname("google.com")
         print(f"Account: {account}")
         return account
 
