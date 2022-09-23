@@ -62,7 +62,7 @@ def login():
 
 @app.route("/api/info/", methods=['POST'])
 def info(recall: bool = False):
-    account = Cache.get("account")
+    account = {}
     headers = Cache.get("headers")
 
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
