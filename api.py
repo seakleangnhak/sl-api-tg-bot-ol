@@ -62,8 +62,8 @@ def login():
 
 @app.route("/api/info/", methods=['POST'])
 def info(recall: bool = False):
-    account = {}
-    headers = Cache.get("headers")
+    account = cache.get("account")
+    headers = cache.get("headers")
 
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
 
@@ -82,7 +82,7 @@ def info(recall: bool = False):
 
         account = re['data']
         account['ip_address'] = socket.gethostbyname(socket.gethostname())
-        Cache.set("account", account)
+        cache.set("account", account)
         print(f"Account: {account}")
         return account
 
@@ -91,7 +91,7 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
-    headers = Cache.get("headers")
+    headers = cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
     uid = account['uid']
     params = {
@@ -118,7 +118,7 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
-    headers = Cache.get("headers")
+    headers = cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
     uid = account['uid']
     params = {
@@ -147,8 +147,8 @@ def competition_info(recall: bool = False):
 
 @app.route("/api/competition/order", methods=['POST'])
 def competition_order(recall: bool = False):
-    headers = Cache.get("headers")
-    account = Cache.get("account")
+    headers = cache.get("headers")
+    account = cache.get("account")
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/order'
     uid = account['uid']
     payload = {
@@ -180,8 +180,8 @@ def competition_order(recall: bool = False):
 
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
-    headers = Cache.get("headers")
-    account = Cache.get("account")
+    headers = cache.get("headers")
+    account = cache.get("account")
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/record'
     uid = account['uid']
     payload = {
