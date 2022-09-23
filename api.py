@@ -91,6 +91,7 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
+    account = cache.get("account")
     headers = cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
     uid = account['uid']
@@ -118,6 +119,7 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
+    account = cache.get("account")
     headers = cache.get("headers")
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
     uid = account['uid']
@@ -204,7 +206,7 @@ def order_record(recall: bool = False):
         
         re = json.loads(r.text)
 
-        return re
+        return re["data"]
 
     except HTTPError as ex:
         return ex
