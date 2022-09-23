@@ -10,6 +10,10 @@ password: str
 token: str
 account = {}
 
+@app.route("/")
+def index():
+    return "Welcome!!"
+
 @app.route("/api/login/", methods=['POST'])
 def login():
     global phone
