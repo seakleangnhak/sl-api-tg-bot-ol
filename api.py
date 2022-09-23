@@ -71,7 +71,7 @@ def info(recall: bool = False):
         re = json.loads(r.text)
 
         account = re['data']
-        account['ip_address'] = socket.gethostbyname("google.com")
+        account['ip_address'] = socket.gethostbyname(socket.gethostname())
         print(f"Account: {account}")
         return account
 
