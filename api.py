@@ -1,3 +1,4 @@
+from turtle import update
 from flask import Flask, request
 import requests
 import json
@@ -9,7 +10,8 @@ app = Flask(__name__)
 phone: str
 password: str
 token: str
-account = {}
+account: dict
+headers: dict
 
 @app.route("/")
 def index():
@@ -20,10 +22,11 @@ def login():
     global phone
     global password
     global token
+    global headers
 
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/auth/phone/login'
     payload = {}
-
+    print(f"login: {request.json}")
     if request.json and "mobile" in request.json and "password" in request.json:
         payload = request.json
         phone = request.json['mobile']
@@ -40,7 +43,13 @@ def login():
         
         re = json.loads(r.text)
         token = re['data']['token']
-        
+
+        headers = {
+            'Authorization': 'Bearer ' + token,
+            'Token': token,
+            'Content-Type': 'application/json'
+        }
+
         return info()
 
     except HTTPError as ex:
@@ -49,13 +58,9 @@ def login():
 @app.route("/api/info/", methods=['POST'])
 def info(recall: bool = False):
     global account
-    url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
+    global headers
 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Token': token,
-        'Content-Type': 'application/json'
-    }
+    url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
 
     print(f"Header: {headers}")
 
@@ -80,17 +85,13 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
+    global headers
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
     uid = account['uid']
     params = {
         'tz':'Asia/Phnom_Penh',
         'lang':'en',
         'uid':uid
-    } 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Token': token,
-        'Content-Type': 'application/json'
     }
 
     try:
@@ -111,17 +112,13 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
+    global headers
     url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
     uid = account['uid']
     params = {
         'lang':'en',
         'uid':uid,
         'cid':request.args.get('cid')
-    } 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Token': token,
-        'Content-Type': 'application/json'
     }
 
     print(f"Header: {headers}")
@@ -144,6 +141,7 @@ def competition_info(recall: bool = False):
 
 @app.route("/api/competition/order", methods=['POST'])
 def competition_order(recall: bool = False):
+    global headers
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/order'
     uid = account['uid']
     payload = {
@@ -152,11 +150,6 @@ def competition_order(recall: bool = False):
         "cid":request.json['cid'],
         "amount": request.json['amount'],
         "odds": request.json['odds']
-    } 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Token': token,
-        'Content-Type': 'application/json'
     }
 
     print(f"Header: {headers}")
@@ -180,6 +173,7 @@ def competition_order(recall: bool = False):
 
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
+    global headers
     url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/record'
     uid = account['uid']
     payload = {
@@ -189,11 +183,6 @@ def order_record(recall: bool = False):
         "page": 1,
         "startTime": request.json['startTime'],
         "endTime": request.json['endTime']
-    } 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'Token': token,
-        'Content-Type': 'application/json'
     }
 
     try:
@@ -212,4 +201,4 @@ def order_record(recall: bool = False):
     except HTTPError as ex:
         return ex
 
-# app.run()
+app.run()
