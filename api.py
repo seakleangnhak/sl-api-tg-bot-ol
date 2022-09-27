@@ -21,7 +21,7 @@ def login():
     global password
     global token
 
-    url = 'https://b984b31f959b88f0.ol668.vip/user-client/auth/phone/login'
+    url = 'https://1e8f3e62cb143785.ol668.online/user-client/auth/phone/login'
     payload = {}
 
     if request.json and "mobile" in request.json and "password" in request.json:
@@ -49,7 +49,7 @@ def login():
 @app.route("/api/info/", methods=['POST'])
 def info(recall: bool = False):
     global account
-    url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
+    url = 'https://1e8f3e62cb143785.ol668.online/user-client/user/get/info'
 
     headers = {
         'Authorization': 'Bearer ' + token,
@@ -80,7 +80,7 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
-    url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
+    url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/hot'
     uid = account['uid']
     params = {
         'tz':'Asia/Phnom_Penh',
@@ -111,7 +111,7 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
-    url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
+    url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/info'
     uid = account['uid']
     params = {
         'lang':'en',
@@ -144,7 +144,7 @@ def competition_info(recall: bool = False):
 
 @app.route("/api/competition/order", methods=['POST'])
 def competition_order(recall: bool = False):
-    url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/order'
+    url = 'https://1e8f3e62cb143785.ol668.online/order-client/order/order'
     uid = account['uid']
     payload = {
         "lang":"en",
@@ -180,7 +180,7 @@ def competition_order(recall: bool = False):
 
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
-    url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/record'
+    url = 'https://1e8f3e62cb143785.ol668.online/order-client/order/record'
     uid = account['uid']
     payload = {
         "lang":"en",
