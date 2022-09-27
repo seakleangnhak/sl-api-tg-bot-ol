@@ -91,6 +91,7 @@ def info(recall: bool = False):
 
 @app.route("/api/competition/", methods=['GET'])
 def competition(recall: bool = False):
+    account = cache.get("account")
     headers = cache.get("headers")
     url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/hot'
     uid = account['uid']
@@ -118,6 +119,7 @@ def competition(recall: bool = False):
 
 @app.route("/api/competition/info", methods=['GET'])
 def competition_info(recall: bool = False):
+    account = cache.get("account")
     headers = cache.get("headers")
     url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/info'
     uid = account['uid']
@@ -210,3 +212,19 @@ def order_record(recall: bool = False):
         return ex
 
 # app.run()
+
+# heroku login -i
+# heroku git:remote -a sl-tg-bot
+# git push heroku master
+# heroku git:remote -a sl-tg-bot1
+# git push heroku master
+# heroku git:remote -a sl-tg-bot2
+# git push heroku master
+# heroku git:remote -a sl-tg-bot3
+# git push heroku master
+
+# heroku login -i
+# heroku git:remote -a sl-tg-bot4
+# git push heroku master
+# heroku git:remote -a sl-tg-bot5
+# git push heroku master
