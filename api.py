@@ -213,3 +213,13 @@ def order_record(recall: bool = False):
         return ex
 
 # app.run()
+
+# heroku login
+# heroku git:remote -a sl-main-tg-bot
+# git push origin heroku master
+# heroku git:remote -a sl-main-tg-bot1
+# git push origin heroku master
+# heroku git:remote -a sl-main-tg-bot2
+# git push origin heroku master
+# heroku git:remote -a sl-main-tg-bot3
+# git push origin heroku master
