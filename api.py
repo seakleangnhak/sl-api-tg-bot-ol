@@ -206,7 +206,7 @@ def order_record(recall: bool = False):
         
         re = json.loads(r.text)
 
-        return re
+        return re['data']
 
     except HTTPError as ex:
         return ex
