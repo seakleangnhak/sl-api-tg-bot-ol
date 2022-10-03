@@ -1,7 +1,6 @@
 FROM ubuntu
 
-RUN apt update -y && \
-    apt upgrade -y && \
+RUN apt update && \
     apt install python3-pip -y
 
 WORKDIR /app
