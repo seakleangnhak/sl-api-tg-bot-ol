@@ -18,14 +18,19 @@ app = Flask(__name__)
 app.config.from_mapping(config)
 
 cache = Cache(app)
+cache.set("url", "https://1e8f3e62cb143785.ol668.online")
 
 @app.route("/")
 def index():
     return "Welcome!!"
 
+def getUrl(path: str) -> str:
+    url = cache.get("url")
+    return f"{url}{path}"
+
 @app.route("/api/login/", methods=['POST'])
 def login():
-    url = 'https://1e8f3e62cb143785.ol668.online/user-client/auth/phone/login'
+    url = getUrl('/user-client/auth/phone/login')
     payload = {}
     print(f"login: {request.json}")
     if request.json and "mobile" in request.json and "password" in request.json:
@@ -65,7 +70,7 @@ def info(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
 
-    url = 'https://1e8f3e62cb143785.ol668.online/user-client/user/get/info'
+    url = getUrl('/user-client/user/get/info')
 
     print(f"Header: {headers}")
 
@@ -93,7 +98,7 @@ def info(recall: bool = False):
 def competition(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
-    url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/hot'
+    url = getUrl('/base-client/competition/competition/hot')
     uid = account['uid']
     params = {
         'tz':'Asia/Phnom_Penh',
@@ -121,7 +126,7 @@ def competition(recall: bool = False):
 def competition_info(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
-    url = 'https://1e8f3e62cb143785.ol668.online/base-client/competition/competition/info'
+    url = getUrl('/base-client/competition/competition/info')
     uid = account['uid']
     params = {
         'lang':'en',
@@ -151,7 +156,7 @@ def competition_info(recall: bool = False):
 def competition_order(recall: bool = False):
     headers = cache.get("headers")
     account = cache.get("account")
-    url = 'https://1e8f3e62cb143785.ol668.online/order-client/order/order'
+    url = getUrl('/order-client/order/order')
     uid = account['uid']
     payload = {
         "lang":"en",
@@ -180,11 +185,21 @@ def competition_order(recall: bool = False):
     except HTTPError as ex:
         return ex
 
+@app.route("/api/url", methods=['PUT'])
+def set_url():
+    newUrl = request.json['url']
+    cache.set("url", newUrl)
+
+    response = '{"status": "ok", "code": 200, "msg": "update successfully"}'
+
+    return json.loads(response)
+
+
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
     headers = cache.get("headers")
     account = cache.get("account")
-    url = 'https://1e8f3e62cb143785.ol668.online/order-client/order/record'
+    url = getUrl('/order-client/order/record')
     uid = account['uid']
     payload = {
         "lang":"en",
