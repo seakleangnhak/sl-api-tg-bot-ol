@@ -29,7 +29,7 @@ def getUrl(path: str) -> str:
     return f"{url}{path}"
 
 @app.route("/api/login/", methods=['POST'])
-def login():
+def login(recall: bool = False):
     url = getUrl('/user-client/auth/phone/login')
     payload = {}
     print(f"login: {request.json}")
@@ -60,7 +60,10 @@ def login():
         }
         cache.set("headers", headers)
 
-        return re['data']
+        if recall:
+            return re
+        else:
+            return info()
 
     except HTTPError as ex:
         return ex
