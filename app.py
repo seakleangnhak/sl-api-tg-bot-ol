@@ -18,14 +18,19 @@ app = Flask(__name__)
 app.config.from_mapping(config)
 
 cache = Cache(app)
+cache.set("url", "https://1e8f3e62cb143785.ol668.online")
 
 @app.route("/")
 def index():
     return "Welcome!!"
 
+def getUrl(path: str) -> str:
+    url = cache.get("url")
+    return f"{url}{path}"
+
 @app.route("/api/login/", methods=['POST'])
-def login(recall: bool = False):
-    url = 'https://b984b31f959b88f0.ol668.vip/user-client/auth/phone/login'
+def login():
+    url = getUrl('/user-client/auth/phone/login')
     payload = {}
     print(f"login: {request.json}")
     if request.json and "mobile" in request.json and "password" in request.json:
@@ -55,10 +60,7 @@ def login(recall: bool = False):
         }
         cache.set("headers", headers)
 
-        if recall:
-            return re
-        else:
-            return info()
+        return re
 
     except HTTPError as ex:
         return ex
@@ -68,7 +70,7 @@ def info(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
 
-    url = 'https://b984b31f959b88f0.ol668.vip/user-client/user/get/info'
+    url = getUrl('/user-client/user/get/info')
 
     print(f"Header: {headers}")
 
@@ -95,7 +97,7 @@ def info(recall: bool = False):
 def competition(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
-    url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/hot'
+    url = getUrl('/base-client/competition/competition/hot')
     uid = account['uid']
     params = {
         'tz':'Asia/Phnom_Penh',
@@ -123,7 +125,7 @@ def competition(recall: bool = False):
 def competition_info(recall: bool = False):
     account = cache.get("account")
     headers = cache.get("headers")
-    url = 'https://b984b31f959b88f0.ol668.vip/base-client/competition/competition/info'
+    url = getUrl('/base-client/competition/competition/info')
     uid = account['uid']
     params = {
         'lang':'en',
@@ -153,7 +155,7 @@ def competition_info(recall: bool = False):
 def competition_order(recall: bool = False):
     headers = cache.get("headers")
     account = cache.get("account")
-    url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/order'
+    url = getUrl('/order-client/order/order')
     uid = account['uid']
     payload = {
         "lang":"en",
@@ -182,11 +184,21 @@ def competition_order(recall: bool = False):
     except HTTPError as ex:
         return ex
 
+@app.route("/api/url", methods=['PUT'])
+def set_url():
+    newUrl = request.json['url']
+    cache.set("url", newUrl)
+
+    response = '{"status": "ok", "code": 200, "msg": "update successfully"}'
+
+    return json.loads(response)
+
+
 @app.route("/api/order/record", methods=['POST'])
 def order_record(recall: bool = False):
     headers = cache.get("headers")
     account = cache.get("account")
-    url = 'https://b984b31f959b88f0.ol668.vip/order-client/order/record'
+    url = getUrl('/order-client/order/record')
     uid = account['uid']
     payload = {
         "lang":"en",
@@ -208,9 +220,25 @@ def order_record(recall: bool = False):
         
         re = json.loads(r.text)
 
-        return re["data"]
+        return re['data']
 
     except HTTPError as ex:
         return ex
 
 # app.run()
+
+# heroku login -i
+# heroku git:remote -a sl-tg-bot
+# git push heroku master
+# heroku git:remote -a sl-tg-bot1
+# git push heroku master
+# heroku git:remote -a sl-tg-bot2
+# git push heroku master
+# heroku git:remote -a sl-tg-bot3
+# git push heroku master
+
+# heroku login -i
+# heroku git:remote -a sl-tg-bot4
+# git push heroku master
+# heroku git:remote -a sl-tg-bot5
+# git push heroku master
