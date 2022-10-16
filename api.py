@@ -24,7 +24,7 @@ def index():
     return "Welcome!!"
 
 @app.route("/api/login/", methods=['POST'])
-def login():
+def login(recall: bool = False):
     url = 'https://b984b31f959b88f0.ol668.vip/user-client/auth/phone/login'
     payload = {}
     print(f"login: {request.json}")
@@ -55,7 +55,10 @@ def login():
         }
         cache.set("headers", headers)
 
-        return info()
+        if recall:
+            return re
+        else:
+            return info()
 
     except HTTPError as ex:
         return ex
@@ -73,8 +76,7 @@ def info(recall: bool = False):
         r = requests.post(url, json={}, headers=headers)
 
         if r.status_code == 401 and recall == False:
-            login()
-            return info(True)
+            return login()
 
         r.raise_for_status()
         
@@ -105,7 +107,7 @@ def competition(recall: bool = False):
         r = requests.get(url, params=params, headers=headers)
 
         if r.status_code == 401 and recall == False:
-            login()
+            login(True)
             return competition(True)
 
         r.raise_for_status()
@@ -135,7 +137,7 @@ def competition_info(recall: bool = False):
         r = requests.get(url, params=params, headers=headers)
 
         if r.status_code == 401 and recall == False:
-            login()
+            login(True)
             return competition_info(True)
 
         r.raise_for_status()
@@ -168,7 +170,7 @@ def competition_order(recall: bool = False):
         r = requests.post(url, json=payload, headers=headers)
         
         if r.status_code == 401 and recall == False:
-            login()
+            login(True)
             return competition_order(True)
 
         r.raise_for_status()
@@ -199,7 +201,7 @@ def order_record(recall: bool = False):
         r = requests.post(url, json=payload, headers=headers)
         
         if r.status_code == 401 and recall == False:
-            login()
+            login(True)
             return order_record(True)
 
         r.raise_for_status()
