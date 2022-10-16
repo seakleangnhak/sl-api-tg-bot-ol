@@ -60,7 +60,7 @@ def login():
         }
         cache.set("headers", headers)
 
-        return re
+        return re['data']
 
     except HTTPError as ex:
         return ex
